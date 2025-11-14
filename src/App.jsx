@@ -27,7 +27,7 @@ export default function App() {
   const peekInterval = useRef(null)
 
   // Typing effect for motto
-  const mottoFull = '“Aim high, and match it with action.”'
+  const mottoFull = '“Bidik tinggi, dan imbangi dengan tindakan.”'
   const [motto, setMotto] = useState('')
   const [phase, setPhase] = useState('typing') // typing | pausing | deleting
   const [cursorVisible, setCursorVisible] = useState(true)
@@ -348,7 +348,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.webp"
+                src="https://eu-central.storage.cloudconvert.com/tasks/3cb1c102-4c5a-4468-8584-15be71f95eb7/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20251114%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20251114T232100Z&X-Amz-Expires=86400&X-Amz-Signature=4e154fca8c1a96e0c40785ba9bfbc6b820c49d36b044de73d47b7793fe4af785&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B%20filename%3D%22aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp%22&response-content-type=image%2Fwebp&x-id=GetObject"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0, rotate: 0, scale: 1 }}
                 animate={{
@@ -540,6 +540,35 @@ export default function App() {
                 </div>
               </div>
               <div ref={metricsRef} className="grid grid-cols-2 gap-4">
+                {/* Gaming - unlimited, larger like 2 bars */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.02 }}
+                  className="md:col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white/90 text-lg font-semibold">Gaming</span>
+                    <span className="text-emerald-300 text-lg font-semibold">Unlimited</span>
+                  </div>
+                  {/* Double stacked bars to look like 2 bars */}
+                  <div className="space-y-2">
+                    <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
+                        style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 800ms ease-out' }}
+                      />
+                    </div>
+                    <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
+                        style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out' }}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+
                 {[
                   { label: 'Discipline', value: 92 },
                   { label: 'Creativity', value: 94 },
@@ -553,7 +582,7 @@ export default function App() {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: (i + 1) * 0.1 }}
                     className="p-5 rounded-2xl bg-white/5 border border-white/10"
                   >
                     <div className="flex items-center justify-between mb-2">
