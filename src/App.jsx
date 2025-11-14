@@ -26,6 +26,16 @@ export default function App() {
   const peekTimer = useRef(null)
   const peekInterval = useRef(null)
 
+  // Typing effect for motto
+  const mottoFull = '“Boleh meninggi tapi sesuai aksi”'
+  const [motto, setMotto] = useState('')
+  const [phase, setPhase] = useState('typing') // typing | pausing | deleting
+  const [cursorVisible, setCursorVisible] = useState(true)
+
+  // Photo hologram + 3D tilt
+  const photoRef = useRef(null)
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0, scale: 1 })
+
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
     { icon: Palette, title: 'Graphic Design', desc: 'Clean, modern visual style with strong composition' },
@@ -168,6 +178,51 @@ export default function App() {
       triggerPeek() // peek on subsequent likes as well
     }
   }
+
+  // Typing effect logic
+  useEffect(() => {
+    let t
+    if (phase === 'typing') {
+      if (motto.length < mottoFull.length) {
+        t = setTimeout(() => setMotto(mottoFull.slice(0, motto.length + 1)), 60)
+      } else {
+        setPhase('pausing')
+      }
+    } else if (phase === 'pausing') {
+      t = setTimeout(() => setPhase('deleting'), 1200)
+    } else if (phase === 'deleting') {
+      if (motto.length > 0) {
+        t = setTimeout(() => setMotto(mottoFull.slice(0, motto.length - 1)), 40)
+      } else {
+        setPhase('typing')
+      }
+    }
+    return () => t && clearTimeout(t)
+  }, [phase, motto, mottoFull])
+
+  useEffect(() => {
+    const c = setInterval(() => setCursorVisible((v) => !v), 500)
+    return () => clearInterval(c)
+  }, [])
+
+  // 3D tilt handlers (mouse & touch)
+  const updateTiltFromPoint = (clientX, clientY) => {
+    const el = photoRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (clientX - rect.left) / rect.width // 0..1
+    const py = (clientY - rect.top) / rect.height // 0..1
+    const rx = (py - 0.5) * -14 // rotateX
+    const ry = (px - 0.5) * 18 // rotateY
+    setTilt({ rx, ry, scale: 1.04 })
+  }
+
+  const handleMouseMove = (e) => updateTiltFromPoint(e.clientX, e.clientY)
+  const handleMouseLeave = () => setTilt({ rx: 0, ry: 0, scale: 1 })
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) updateTiltFromPoint(e.touches[0].clientX, e.touches[0].clientY)
+  }
+  const handleTouchEnd = () => setTilt({ rx: 0, ry: 0, scale: 1 })
 
   return (
     <div
@@ -322,7 +377,8 @@ export default function App() {
                     Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger.
                   </p>
                   <p className="mt-3 text-white/80 italic">
-                    “Boleh meninggi tapi sesuai aksi”
+                    {motto}
+                    <span className={`inline-block w-[10px] ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}>|</span>
                   </p>
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     <a
@@ -391,20 +447,56 @@ export default function App() {
                   </div>
                 </motion.div>
               </div>
-              {/* Profile Photo */}
+              {/* Profile Photo with hologram + 3D tilt */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="justify-self-center"
+                ref={photoRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                style={{
+                  transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(${tilt.scale})`,
+                  transition: 'transform 180ms ease-out',
+                }}
+                className="justify-self-center relative"
               >
                 <div className="relative h-56 w-56 sm:h-64 sm:w-64 rounded-3xl overflow-hidden border border-white/10 shadow-xl shadow-emerald-500/10">
+                  {/* Photo */}
                   <img
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMwuUgJILFp3x2kBrcXmLzPUCi0i3aFKXlIUtC2iHMSVJNAWPYSiYKfs&s=10"
                     alt="Artha Handi Wijaya portrait"
                     className="h-full w-full object-cover"
+                    draggable={false}
                   />
+
+                  {/* Hologram color layers */}
+                  <div className="absolute inset-0 mix-blend-screen opacity-60" style={{
+                    background: 'linear-gradient(130deg, rgba(56,189,248,0.25), rgba(34,197,94,0.18), rgba(147,51,234,0.18))'
+                  }} />
+
+                  {/* Scanning shine */}
+                  <motion.div
+                    className="absolute -inset-y-10 -left-1/2 w-1/2 rotate-12"
+                    animate={{ x: ['-120%', '220%'] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: 'linear' }}
+                    style={{
+                      background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0) 90%)'
+                    }}
+                  />
+
+                  {/* Grid lines */}
+                  <div
+                    className="absolute inset-0 opacity-[0.18]"
+                    style={{
+                      backgroundImage: 'linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)',
+                      backgroundSize: '20px 20px',
+                      mixBlendMode: 'overlay'
+                    }}
+                  />
+
+                  {/* Glow ring */}
                   <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
+                  <div className="pointer-events-none absolute -inset-6 rounded-[32px]" style={{ boxShadow: '0 0 80px rgba(56,189,248,0.25), 0 0 60px rgba(34,197,94,0.18)' }} />
                 </div>
               </motion.div>
             </div>
