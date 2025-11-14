@@ -116,7 +116,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <button onClick={() => scrollTo('#home')} className="group">
               <span className="font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300 group-hover:to-lime-300 transition-colors">
-                Artha HW
+                Arthaahu
               </span>
             </button>
 
@@ -214,7 +214,7 @@ export default function App() {
                   <h1 className="mt-3 text-4xl sm:text-6xl font-extrabold leading-tight">
                     Hi, I’m{' '}
                     <span className="bg-gradient-to-tr from-green-400 via-emerald-300 to-lime-300 bg-clip-text text-transparent">
-                      Artha Handi Wijaya
+                      Arthaahu
                     </span>
                   </h1>
                   <p className="mt-4 text-white/85 text-lg">
@@ -257,7 +257,7 @@ export default function App() {
                 <div className="relative h-56 w-56 sm:h-64 sm:w-64 rounded-3xl overflow-hidden border border-white/10 shadow-xl shadow-emerald-500/10">
                   <img
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMwuUgJILFp3x2kBrcXmLzPUCi0i3aFKXlIUtC2iHMSVJNAWPYSiYKfs&s=10"
-                    alt="Artha Handi Wijaya portrait"
+                    alt="Arthaahu portrait"
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
@@ -297,6 +297,8 @@ export default function App() {
                   { label: 'Creativity', value: 94 },
                   { label: 'Editing', value: 78 },
                   { label: 'Design', value: 79 },
+                  { label: 'Communication', value: 60 },
+                  { label: 'Socializing', value: 40 },
                 ].map((s, i) => (
                   <motion.div
                     key={s.label}
@@ -363,7 +365,7 @@ export default function App() {
 
         {/* Footer */}
         <div className="py-10 text-center text-white/60 text-sm">
-          © {new Date().getFullYear()} Artha Handi Wijaya
+          © {new Date().getFullYear()} Arthaahu
         </div>
       </div>
     </div>
