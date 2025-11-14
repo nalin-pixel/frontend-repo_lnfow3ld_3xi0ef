@@ -75,6 +75,28 @@ export default function App() {
     return () => window.removeEventListener('scroll', handler)
   }, [links])
 
+  // Persisted first-time animation for About metrics
+  const metricsRef = useRef(null)
+  const [aboutSeen, setAboutSeen] = useState(false)
+  useEffect(() => {
+    if (!metricsRef.current || aboutSeen) return
+    const el = metricsRef.current
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setAboutSeen(true)
+            obs.disconnect()
+            break
+          }
+        }
+      },
+      { root: null, threshold: 0.4 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [aboutSeen])
+
   return (
     <div
       className="min-h-screen text-white selection:bg-emerald-500/30"
@@ -269,7 +291,7 @@ export default function App() {
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Dream: Get Rich</span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div ref={metricsRef} className="grid grid-cols-2 gap-4">
                 {[
                   { label: 'Discipline', value: 92 },
                   { label: 'Creativity', value: 94 },
@@ -289,12 +311,9 @@ export default function App() {
                       <span className="text-emerald-300">{s.value}%</span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${s.value}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
+                      <div
+                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300 transition-[width] duration-700 ease-out"
+                        style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
                       />
                     </div>
                   </motion.div>
