@@ -282,7 +282,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://drive.google.com/uc?export=view&id=1_KXmOiR39_9tRDImNOfWyBJORoVuTTvL"
+                src="https://d3dga506664sw7.cloudfront.net/3ox8c%2Fpreview%2F72794940%2Fmain_large.png?response-content-disposition=inline%3Bfilename%3D%22main_large.png%22%3B&response-content-type=image%2Fpng&Expires=1763160858&Signature=eQDEzexYUqCL2W-GDkXtNRp7aQExl7J642yIb3zfcryeDq7aolGivDP07IDQ0T1rkKQnk7HgQGnHA-9iCZddjkSLud0DX4myBS9m0K5q17pKdvVc-si4GUOnapkAiPjX3d8tisgIJfLUEeUqipWcnj82BBHWTmIdeMaopSvkOauCAeGQ19jGN5b4pz3EBzUqMaW5G7DXrgjExbs9nbCAm0gZH0t8jBWqClTRk2uWsN4-57kz4zf2LS6sW2UDDjfQ82VlqKFuDaDoQtFgQA7ZjAgwXETP46iVhVFQ0Sis6Z0hXnGOWblxWTgh8bhgQp4tfKhL0Wbpjot2geNg7xnR7w__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0 }}
                 animate={{ x: peek.side === 'left' ? '-6%' : '6%', opacity: 1 }}
@@ -491,7 +491,7 @@ export default function App() {
         {/* Back to Top Button */}
         <button
           aria-label="Back to top"
-          onClick={() => scrollTo('#home')}
+          onClick={() => scrollTo('#home')]
           className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 text-black shadow-lg shadow-emerald-500/20 flex items-center justify-center hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-300"
         >
           <ArrowUp size={20} />
