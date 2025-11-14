@@ -282,7 +282,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://northern-bronze-oqu9afb64r.edgeone.app/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.png"
+                src="https://drive.google.com/uc?export=view&id=1_KXmOiR39_9tRDImNOfWyBJORoVuTTvL"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0 }}
                 animate={{ x: peek.side === 'left' ? '-6%' : '6%', opacity: 1 }}
