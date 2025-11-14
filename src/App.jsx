@@ -337,7 +337,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://jumpshare.com/share/DZcG95mA9MEuFE394JAk"
+                src="https://eu-central.storage.cloudconvert.com/tasks/3cb1c102-4c5a-4468-8584-15be71f95eb7/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20251114%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20251114T232100Z&X-Amz-Expires=86400&X-Amz-Signature=4e154fca8c1a96e0c40785ba9bfbc6b820c49d36b044de73d47b7793fe4af785&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B%20filename%3D%22aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp%22&response-content-type=image%2Fwebp&x-id=GetObject"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0, rotate: 0, scale: 1 }}
                 animate={{
