@@ -144,10 +144,10 @@ export default function App() {
     // Initial peek at page load
     triggerPeek()
 
-    // Every 5 seconds
+    // Every 10 seconds
     peekInterval.current = setInterval(() => {
       triggerPeek()
-    }, 5000)
+    }, 10000)
 
     return () => {
       if (peekTimer.current) clearTimeout(peekTimer.current)
@@ -288,7 +288,7 @@ export default function App() {
                 animate={{ x: peek.side === 'left' ? '-6%' : '6%', opacity: 1 }}
                 exit={{ x: peek.side === 'left' ? '-120%' : '120%', opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-                className={`absolute ${peek.side === 'left' ? 'left-0' : 'right-0'} w-[160px] sm:w-[200px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]`}
+                className={`absolute ${peek.side === 'left' ? 'left-0' : 'right-0'} w-[120px] sm:w-[160px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]`}
                 style={{ top: `${peek.top}vh`, transformOrigin: peek.side === 'left' ? 'left center' : 'right center' }}
               />
             )}
