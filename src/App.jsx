@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette, Menu, X } from 'lucide-react'
+import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette, Menu, X, Heart } from 'lucide-react'
 
 function Section({ id, children, className = '' }) {
   return (
@@ -14,6 +14,11 @@ export default function App() {
   const [active, setActive] = useState('#home')
   const [menuOpen, setMenuOpen] = useState(false)
   const [flames, setFlames] = useState([]) // { id, x, y }
+
+  // Like state
+  const [likes, setLikes] = useState(0)
+  const [liked, setLiked] = useState(false)
+  const [hearts, setHearts] = useState([]) // { id }
 
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
@@ -96,6 +101,26 @@ export default function App() {
     obs.observe(el)
     return () => obs.disconnect()
   }, [aboutSeen])
+
+  // Handle like / flying hearts
+  const likeBtnRef = useRef(null)
+  const handleLike = (e) => {
+    e.stopPropagation() // prevent global flame on like button
+    setLiked((prev) => {
+      const next = !prev
+      setLikes((c) => Math.max(0, c + (next ? 1 : -1)))
+      if (next) spawnHeartBurst()
+      return next
+    })
+  }
+
+  const spawnHeartBurst = () => {
+    const id = Math.random().toString(36).slice(2)
+    setHearts((prev) => [...prev, { id }])
+    setTimeout(() => {
+      setHearts((prev) => prev.filter((h) => h.id !== id))
+    }, 900)
+  }
 
   return (
     <div
@@ -244,6 +269,49 @@ export default function App() {
                     >
                       About Me
                     </a>
+
+                    {/* Like Button */}
+                    <div className="relative">
+                      <button
+                        ref={likeBtnRef}
+                        onClick={handleLike}
+                        className={`inline-flex items-center gap-2 px-4 py-3 rounded-xl border transition shadow-lg ${
+                          liked
+                            ? 'bg-rose-500/20 border-rose-400/30 text-rose-300'
+                            : 'bg-white/10 border-white/15 text-white hover:bg-white/15'
+                        }`}
+                        aria-pressed={liked}
+                        aria-label="Like"
+                      >
+                        <span className={`grid place-items-center h-5 w-5 rounded ${liked ? 'text-rose-400' : 'text-white'}`}>
+                          <Heart
+                            size={18}
+                            className={liked ? 'scale-110' : ''}
+                            strokeWidth={2}
+                            fill={liked ? 'currentColor' : 'none'}
+                          />
+                        </span>
+                        <span className="text-sm font-medium">{likes}</span>
+                      </button>
+
+                      {/* Flying heart animation container */}
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                        <AnimatePresence>
+                          {hearts.map((h) => (
+                            <motion.div
+                              key={h.id}
+                              initial={{ opacity: 0, y: 8, scale: 0.6, rotate: -10 }}
+                              animate={{ opacity: 1, y: -40, scale: 1, rotate: 0 }}
+                              exit={{ opacity: 0, y: -60, scale: 0.9, rotate: 10 }}
+                              transition={{ duration: 0.8, ease: 'easeOut' }}
+                              className="text-rose-400"
+                            >
+                              <Heart size={18} fill="currentColor" stroke="none" />
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </div>
