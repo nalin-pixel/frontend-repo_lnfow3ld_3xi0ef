@@ -82,7 +82,7 @@ export default function App() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }} className="justify-self-center">
               <div className="relative h-56 w-56 sm:h-64 sm:w-64 rounded-3xl overflow-hidden border border-white/10 shadow-xl shadow-fuchsia-500/10">
                 <img
-                  src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMwuUgJILFp3x2kBrcXmLzPUCi0i3aFKXlIUtC2iHMSVJNAWPYSiYKfs&s=10"
                   alt="Artha Handi Wijaya portrait"
                   className="h-full w-full object-cover"
                 />
