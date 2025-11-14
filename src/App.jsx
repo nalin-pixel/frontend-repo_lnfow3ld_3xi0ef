@@ -27,7 +27,7 @@ export default function App() {
   const peekInterval = useRef(null)
 
   // Typing effect for motto
-  const mottoFull = '“Boleh meninggi tapi sesuai aksi”'
+  const mottoFull = '“Aim high, and match it with action.”'
   const [motto, setMotto] = useState('')
   const [phase, setPhase] = useState('typing') // typing | pausing | deleting
   const [cursorVisible, setCursorVisible] = useState(true)
@@ -348,7 +348,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://eu-central.storage.cloudconvert.com/tasks/3cb1c102-4c5a-4468-8584-15be71f95eb7/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20251114%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20251114T232100Z&X-Amz-Expires=86400&X-Amz-Signature=4e154fca8c1a96e0c40785ba9bfbc6b820c49d36b044de73d47b7793fe4af785&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B%20filename%3D%22aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp%22&response-content-type=image%2Fwebp&x-id=GetObject"
+                src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.webp"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0, rotate: 0, scale: 1 }}
                 animate={{
@@ -385,7 +385,7 @@ export default function App() {
                     </span>
                   </h1>
                   <p className="mt-4 text-white/85 text-lg">
-                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger. Juga suka bermain game, terutama genre FPS.
+                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger. I also enjoy gaming, especially the FPS genre.
                   </p>
                   <p className="mt-3 text-white/80 italic">
                     {motto}
@@ -529,7 +529,7 @@ export default function App() {
                   About Me
                 </h2>
                 <p className="text-white/85">
-                  On court I love basketball; off court I cut videos, design bold visuals, and bring stories to life. Accounting taught me structure; creativity brings the color. Di waktu santai, aku juga hobi bermain game, terutama game FPS.
+                  On court I love basketball; off court I cut videos, design bold visuals, and bring stories to life. Accounting taught me structure; creativity brings the color. In my free time, I also enjoy gaming—especially FPS titles.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Height: 170cm+</span>
