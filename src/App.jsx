@@ -21,6 +21,11 @@ export default function App() {
   const [hearts, setHearts] = useState([]) // { id }
   const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
 
+  // Peeking image state
+  const [peek, setPeek] = useState(null) // { id, side: 'left'|'right', top: number }
+  const peekTimer = useRef(null)
+  const peekInterval = useRef(null)
+
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
     { icon: Palette, title: 'Graphic Design', desc: 'Clean, modern visual style with strong composition' },
@@ -120,15 +125,47 @@ export default function App() {
     }, 900)
   }
 
+  // Helper: trigger peeking image
+  const triggerPeek = () => {
+    // Random side and vertical position
+    const side = Math.random() > 0.5 ? 'left' : 'right'
+    const top = 15 + Math.random() * 60 // 15% - 75% viewport height
+    const id = Math.random().toString(36).slice(2)
+
+    setPeek({ id, side, top })
+
+    // Auto hide after 2.4s
+    if (peekTimer.current) clearTimeout(peekTimer.current)
+    peekTimer.current = setTimeout(() => setPeek((p) => (p && p.id === id ? null : p)), 2400)
+  }
+
+  // Start interval + initial peek on mount
+  useEffect(() => {
+    // Initial peek at page load
+    triggerPeek()
+
+    // Every 5 seconds
+    peekInterval.current = setInterval(() => {
+      triggerPeek()
+    }, 5000)
+
+    return () => {
+      if (peekTimer.current) clearTimeout(peekTimer.current)
+      if (peekInterval.current) clearInterval(peekInterval.current)
+    }
+  }, [])
+
   const handleLike = (e) => {
     e.stopPropagation() // prevent global flame on like button
     if (!liked) {
       setLiked(true)
       setLikes((c) => c + 1)
       spawnHeartBurst()
+      triggerPeek() // also peek on first like
     } else {
       // Already liked: only show heart animation, don't change count
       spawnHeartBurst()
+      triggerPeek() // peek on subsequent likes as well
     }
   }
 
@@ -236,6 +273,25 @@ export default function App() {
                 }}
               />
             ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Peeking image */}
+        <div className="pointer-events-none fixed inset-0 z-40">
+          <AnimatePresence>
+            {peek && (
+              <motion.img
+                key={peek.id}
+                src="https://northern-bronze-oqu9afb64r.edgeone.app/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.png"
+                alt="Peeking graphic"
+                initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0 }}
+                animate={{ x: peek.side === 'left' ? '-6%' : '6%', opacity: 1 }}
+                exit={{ x: peek.side === 'left' ? '-120%' : '120%', opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                className={`absolute ${peek.side === 'left' ? 'left-0' : 'right-0'} w-[160px] sm:w-[200px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]`}
+                style={{ top: `${peek.top}vh`, transformOrigin: peek.side === 'left' ? 'left center' : 'right center' }}
+              />
+            )}
           </AnimatePresence>
         </div>
 
