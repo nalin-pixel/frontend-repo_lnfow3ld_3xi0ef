@@ -15,10 +15,11 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [flames, setFlames] = useState([]) // { id, x, y }
 
-  // Like state
+  // Like state (single-like per session)
   const [likes, setLikes] = useState(0)
   const [liked, setLiked] = useState(false)
   const [hearts, setHearts] = useState([]) // { id }
+  const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
 
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
@@ -102,24 +103,33 @@ export default function App() {
     return () => obs.disconnect()
   }, [aboutSeen])
 
-  // Handle like / flying hearts
+  // Like button behavior
   const likeBtnRef = useRef(null)
-  const handleLike = (e) => {
-    e.stopPropagation() // prevent global flame on like button
-    setLiked((prev) => {
-      const next = !prev
-      setLikes((c) => Math.max(0, c + (next ? 1 : -1)))
-      if (next) spawnHeartBurst()
-      return next
-    })
-  }
-
   const spawnHeartBurst = () => {
+    const now = Date.now()
+    if (now - lastHeartAt.current < 180) return // cooldown ~180ms
+    lastHeartAt.current = now
     const id = Math.random().toString(36).slice(2)
-    setHearts((prev) => [...prev, { id }])
+    setHearts((prev) => {
+      const next = [...prev, { id }]
+      // keep only a small number of hearts in DOM
+      return next.slice(-6)
+    })
     setTimeout(() => {
       setHearts((prev) => prev.filter((h) => h.id !== id))
     }, 900)
+  }
+
+  const handleLike = (e) => {
+    e.stopPropagation() // prevent global flame on like button
+    if (!liked) {
+      setLiked(true)
+      setLikes((c) => c + 1)
+      spawnHeartBurst()
+    } else {
+      // Already liked: only show heart animation, don't change count
+      spawnHeartBurst()
+    }
   }
 
   return (
