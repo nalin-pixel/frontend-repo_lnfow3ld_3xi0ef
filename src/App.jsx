@@ -27,7 +27,7 @@ export default function App() {
   const peekInterval = useRef(null)
 
   // Typing effect for motto
-  const mottoFull = '“Bidik tinggi, dan imbangi dengan tindakan.”'
+  const mottoFull = 'Boleh meninggi tapi sesuai aksi'
   const [motto, setMotto] = useState('')
   const [phase, setPhase] = useState('typing') // typing | pausing | deleting
   const [cursorVisible, setCursorVisible] = useState(true)
@@ -522,9 +522,9 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="grid md:grid-cols-2 gap-10"
+              className="grid md:grid-cols-2 gap-4"
             >
-              <div className="space-y-4">
+              <div className="space-y-4 md:col-span-2">
                 <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">
                   About Me
                 </h2>
@@ -539,65 +539,55 @@ export default function App() {
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Hobby: FPS Gaming</span>
                 </div>
               </div>
-              <div ref={metricsRef} className="grid grid-cols-2 gap-4">
-                {/* Gaming - unlimited, larger like 2 bars */}
+
+              {[
+                { label: 'Discipline', value: 92 },
+                { label: 'Creativity', value: 94 },
+                { label: 'Editing', value: 78 },
+                { label: 'Design', value: 79 },
+                { label: 'Communication', value: 60 },
+                { label: 'Socializing', value: 40 },
+              ].map((s, i) => (
                 <motion.div
+                  key={s.label}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.02 }}
-                  className="md:col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10"
+                  transition={{ delay: i * 0.08 }}
+                  className="p-5 rounded-2xl bg-white/5 border border-white/10"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-white/90 text-lg font-semibold">Gaming</span>
-                    <span className="text-emerald-300 text-lg font-semibold">Unlimited</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-white/85">{s.label}</span>
+                    <span className="text-emerald-300">{s.value}%</span>
                   </div>
-                  {/* Double stacked bars to look like 2 bars */}
-                  <div className="space-y-2">
-                    <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
-                        style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 800ms ease-out' }}
-                      />
-                    </div>
-                    <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
-                        style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out' }}
-                      />
-                    </div>
+                  <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-green-400 to-emerald-300 transition-[width] duration-700 ease-out"
+                      style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
+                    />
                   </div>
                 </motion.div>
+              ))}
 
-                {[
-                  { label: 'Discipline', value: 92 },
-                  { label: 'Creativity', value: 94 },
-                  { label: 'Editing', value: 78 },
-                  { label: 'Design', value: 79 },
-                  { label: 'Communication', value: 60 },
-                  { label: 'Socializing', value: 40 },
-                ].map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (i + 1) * 0.1 }}
-                    className="p-5 rounded-2xl bg-white/5 border border-white/10"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-white/85">{s.label}</span>
-                      <span className="text-emerald-300">{s.value}%</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-green-400 to-emerald-300 transition-[width] duration-700 ease-out"
-                        style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              {/* Gaming card placed at bottom, spans two columns, single large bar */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="md:col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-white/90 text-lg font-semibold">Gaming</span>
+                  <span className="text-emerald-300 text-lg font-semibold">Unlimited</span>
+                </div>
+                <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
+                    style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out' }}
+                  />
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </Section>
