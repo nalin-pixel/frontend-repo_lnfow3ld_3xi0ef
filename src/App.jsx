@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, BadgeCheck, PenTool, Camera, Palette } from 'lucide-react'
+import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette } from 'lucide-react'
 
 function Section({ id, children, className = '' }) {
   return (
@@ -40,9 +40,10 @@ export default function App() {
         {/* Navbar */}
         <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <button onClick={() => scrollTo('#home')} className="flex items-center gap-2 group">
-              <span className="h-8 w-8 rounded-lg bg-gradient-to-tr from-green-400 via-emerald-400 to-lime-300 grid place-items-center">✨</span>
-              <span className="font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300 group-hover:to-lime-300 transition-colors">Artha HW</span>
+            <button onClick={() => scrollTo('#home')} className="group">
+              <span className="font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300 group-hover:to-lime-300 transition-colors">
+                Artha HW
+              </span>
             </button>
             <nav className="hidden md:flex items-center gap-6 text-sm">
               {[
@@ -65,7 +66,6 @@ export default function App() {
               {/* Intro Text */}
               <div className="max-w-2xl">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                  {/* Removed small label text */}
                   <h1 className="mt-3 text-4xl sm:text-6xl font-extrabold leading-tight">
                     Hi, I’m{' '}
                     <span className="bg-gradient-to-tr from-green-400 via-emerald-300 to-lime-300 bg-clip-text text-transparent">
@@ -73,7 +73,7 @@ export default function App() {
                     </span>
                   </h1>
                   <p className="mt-4 text-white/85 text-lg">
-                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate from SMKS PASUNDAN SUBANG. Taller than 170 cm—and my age? A secret. Dreaming big and working bigger.
+                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger.
                   </p>
                   <p className="mt-3 text-white/80 italic">
                     “Boleh meninggi tapi sesuai aksi”
@@ -141,7 +141,8 @@ export default function App() {
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Height: 170cm+</span>
-                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Age: Unknown</span>
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Age: 18+</span>
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Birthday: July 5th</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Dream: Get Rich</span>
                 </div>
               </div>
@@ -208,6 +209,15 @@ export default function App() {
             </div>
           </div>
         </Section>
+
+        {/* Back to Top Button */}
+        <button
+          aria-label="Back to top"
+          onClick={() => scrollTo('#home')}
+          className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 text-black shadow-lg shadow-emerald-500/20 flex items-center justify-center hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+        >
+          <ArrowUp size={20} />
+        </button>
 
         {/* Footer */}
         <div className="py-10 text-center text-white/60 text-sm">
