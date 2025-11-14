@@ -1,6 +1,6 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette } from 'lucide-react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette, Menu, X } from 'lucide-react'
 
 function Section({ id, children, className = '' }) {
   return (
@@ -11,6 +11,10 @@ function Section({ id, children, className = '' }) {
 }
 
 export default function App() {
+  const [active, setActive] = useState('#home')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [flames, setFlames] = useState([]) // { id, x, y, key }
+
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
     { icon: Palette, title: 'Graphic Design', desc: 'Clean, modern visual style with strong composition' },
@@ -18,10 +22,53 @@ export default function App() {
     { icon: BadgeCheck, title: 'Consistency', desc: 'Disciplined like sports training—results over talk' },
   ]
 
+  const links = useMemo(() => ([
+    { label: 'Home', href: '#home' },
+    { label: 'About', href: '#about' },
+    { label: 'Skills', href: '#skills' },
+  ]), [])
+
   const scrollTo = (id) => {
     const el = document.querySelector(id)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  // Handle blue "fire" burst
+  const triggerFlame = (x, y) => {
+    const id = Math.random().toString(36).slice(2)
+    setFlames((prev) => [...prev, { id, x, y }])
+    // Auto-remove after animation (~700ms)
+    setTimeout(() => {
+      setFlames((prev) => prev.filter((f) => f.id !== id))
+    }, 800)
+  }
+
+  const onNavClick = (e, href) => {
+    e.preventDefault()
+    setActive(href)
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+    triggerFlame(x, y)
+    scrollTo(href)
+    setMenuOpen(false)
+  }
+
+  // Track active section on scroll
+  useEffect(() => {
+    const handler = () => {
+      const sections = links.map((l) => document.querySelector(l.href)).filter(Boolean)
+      const y = window.scrollY + 100
+      let current = '#home'
+      for (const sec of sections) {
+        if (sec.offsetTop <= y) current = `#${sec.id}`
+      }
+      setActive(current)
+    }
+    handler()
+    window.addEventListener('scroll', handler)
+    return () => window.removeEventListener('scroll', handler)
+  }, [links])
 
   return (
     <div
@@ -45,19 +92,90 @@ export default function App() {
                 Artha HW
               </span>
             </button>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-              {[
-                { label: 'About', href: '#about' },
-                { label: 'Skills', href: '#skills' },
-              ].map((n) => (
-                <button key={n.href} onClick={() => scrollTo(n.href)} className="text-white/80 hover:text-white transition-colors">
-                  {n.label}
+
+            {/* Top-right Menu */}
+            <nav className="hidden md:flex items-center gap-2 text-sm">
+              {links.map((n) => (
+                <button
+                  key={n.href}
+                  onClick={(e) => onNavClick(e, n.href)}
+                  className={`relative px-3 py-2 rounded-lg transition-colors ${active === n.href ? 'text-white' : 'text-white/80 hover:text-white'}`}
+                >
+                  <span>{n.label}</span>
+                  {active === n.href && (
+                    <motion.span
+                      layoutId="active-pill"
+                      className="absolute inset-0 -z-10 rounded-lg"
+                      style={{
+                        background:
+                          'radial-gradient(120% 180% at 50% 0%, rgba(96,165,250,0.25) 0%, rgba(56,189,248,0.18) 35%, rgba(14,165,233,0.08) 70%, rgba(0,0,0,0) 100%)',
+                        boxShadow: '0 0 25px rgba(56,189,248,0.25), inset 0 0 15px rgba(59,130,246,0.15)'
+                      }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
                 </button>
               ))}
             </nav>
-            <div className="w-20" />
+
+            {/* Mobile menu button (top-right) */}
+            <div className="md:hidden flex items-center">
+              <button
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                onClick={() => setMenuOpen((s) => !s)}
+                className="p-2 rounded-lg bg-white/10 hover:bg-white/15 text-white"
+              >
+                {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile dropdown */}
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="md:hidden border-t border-white/10 bg-black/60 backdrop-blur-xl"
+              >
+                <div className="px-4 py-3 flex flex-col gap-2">
+                  {links.map((n) => (
+                    <button
+                      key={n.href}
+                      onClick={(e) => onNavClick(e, n.href)}
+                      className={`text-left px-3 py-2 rounded-lg ${active === n.href ? 'bg-white/10 text-white' : 'text-white/85 hover:bg-white/5'}`}
+                    >
+                      {n.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </header>
+
+        {/* Blue fire click effects */}
+        <div className="pointer-events-none fixed inset-0 z-40">
+          <AnimatePresence>
+            {flames.map((f) => (
+              <motion.div
+                key={f.id}
+                initial={{ opacity: 0.5, scale: 0.2, x: f.x - 50, y: f.y - 50 }}
+                animate={{ opacity: 0, scale: 2.2, x: f.x - 100, y: f.y - 100 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+                className="absolute h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+                style={{
+                  background:
+                    'conic-gradient(from 180deg at 50% 50%, rgba(59,130,246,0.55), rgba(56,189,248,0.55), rgba(14,165,233,0.45), rgba(59,130,246,0.0))',
+                  boxShadow: '0 0 60px 10px rgba(56,189,248,0.35)'
+                }}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
 
         {/* Hero */}
         <Section id="home" className="relative h-[90vh] pt-16">
@@ -83,7 +201,7 @@ export default function App() {
                       href="#skills"
                       onClick={(e) => {
                         e.preventDefault();
-                        scrollTo('#skills')
+                        onNavClick(e, '#skills')
                       }}
                       className="inline-flex items-center gap-2 bg-gradient-to-r from-green-400 to-emerald-300 text-black font-semibold px-5 py-3 rounded-xl shadow-lg shadow-emerald-500/10"
                     >
@@ -93,7 +211,7 @@ export default function App() {
                       href="#about"
                       onClick={(e) => {
                         e.preventDefault();
-                        scrollTo('#about')
+                        onNavClick(e, '#about')
                       }}
                       className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 py-3 rounded-xl"
                     >
