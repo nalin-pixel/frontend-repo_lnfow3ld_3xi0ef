@@ -562,7 +562,7 @@ export default function App() {
                   </div>
                   <div className="h-[6px] w-full rounded-full bg-white/10 overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-green-400 to-emerald-300 transition-[width] duration-700 ease-out"
+                      className="h-full bg-gradient-to-r from-emerald-400 via-lime-300 to-green-500 transition-[width] duration-700 ease-out"
                       style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
                     />
                   </div>
@@ -583,7 +583,7 @@ export default function App() {
                 </div>
                 <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-green-400 to-emerald-300"
+                    className="h-full bg-gradient-to-r from-emerald-400 via-lime-300 to-green-500"
                     style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out' }}
                   />
                 </div>
