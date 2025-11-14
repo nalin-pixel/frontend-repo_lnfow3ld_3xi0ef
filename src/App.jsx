@@ -13,7 +13,7 @@ function Section({ id, children, className = '' }) {
 export default function App() {
   const [active, setActive] = useState('#home')
   const [menuOpen, setMenuOpen] = useState(false)
-  const [flames, setFlames] = useState([]) // { id, x, y, key }
+  const [flames, setFlames] = useState([]) // { id, x, y }
 
   const skills = [
     { icon: Camera, title: 'Video Editing', desc: 'Cuts, transitions, color grading, motion graphics' },
@@ -33,23 +33,28 @@ export default function App() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  // Handle blue "fire" burst
+  // Blue "fire" burst state handler
   const triggerFlame = (x, y) => {
     const id = Math.random().toString(36).slice(2)
     setFlames((prev) => [...prev, { id, x, y }])
-    // Auto-remove after animation (~700ms)
-    setTimeout(() => {
-      setFlames((prev) => prev.filter((f) => f.id !== id))
-    }, 800)
+    setTimeout(() => setFlames((prev) => prev.filter((f) => f.id !== id)), 800)
   }
+
+  // Global click listener: every click anywhere creates a blue flame at the cursor
+  useEffect(() => {
+    const handleClick = (e) => {
+      // Ignore non-primary clicks
+      if (e.button !== 0) return
+      triggerFlame(e.clientX, e.clientY)
+    }
+    window.addEventListener('click', handleClick, { passive: true })
+    return () => window.removeEventListener('click', handleClick)
+  }, [])
 
   const onNavClick = (e, href) => {
     e.preventDefault()
+    e.stopPropagation() // avoid double flame; global handler will already fire
     setActive(href)
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = rect.left + rect.width / 2
-    const y = rect.top + rect.height / 2
-    triggerFlame(x, y)
     scrollTo(href)
     setMenuOpen(false)
   }
