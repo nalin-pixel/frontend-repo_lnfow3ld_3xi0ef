@@ -522,9 +522,9 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="grid md:grid-cols-2 gap-4"
+              className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-4"
             >
-              <div className="space-y-4 md:col-span-2">
+              <div className="space-y-4 col-span-2">
                 <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">
                   About Me
                 </h2>
@@ -554,13 +554,13 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="p-5 rounded-2xl bg-white/5 border border-white/10"
+                  className="p-4 rounded-xl bg-white/5 border border-white/10"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/85">{s.label}</span>
-                    <span className="text-emerald-300">{s.value}%</span>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-white/85 text-sm">{s.label}</span>
+                    <span className="text-emerald-300 text-sm">{s.value}%</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-[6px] w-full rounded-full bg-white/10 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-green-400 to-emerald-300 transition-[width] duration-700 ease-out"
                       style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
@@ -575,7 +575,7 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="md:col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10"
+                className="col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/90 text-lg font-semibold">Gaming</span>
