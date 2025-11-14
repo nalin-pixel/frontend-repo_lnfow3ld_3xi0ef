@@ -224,6 +224,17 @@ export default function App() {
   }
   const handleTouchEnd = () => setTilt({ rx: 0, ry: 0, scale: 1 })
 
+  // Looping animations for skill icons (varied per index)
+  const iconLoopForIndex = (i) => {
+    const patterns = [
+      { y: [0, -4, 0] },
+      { rotate: [0, -6, 0, 6, 0] },
+      { scale: [1, 1.08, 1] },
+      { x: [0, 4, 0, -4, 0] },
+    ]
+    return patterns[i % patterns.length]
+  }
+
   return (
     <div
       className="min-h-screen text-white selection:bg-emerald-500/30"
@@ -374,7 +385,7 @@ export default function App() {
                     </span>
                   </h1>
                   <p className="mt-4 text-white/85 text-lg">
-                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger.
+                    Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger. Juga suka bermain game, terutama genre FPS.
                   </p>
                   <p className="mt-3 text-white/80 italic">
                     {motto}
@@ -518,13 +529,14 @@ export default function App() {
                   About Me
                 </h2>
                 <p className="text-white/85">
-                  On court I love basketball; off court I cut videos, design bold visuals, and bring stories to life. Accounting taught me structure; creativity brings the color.
+                  On court I love basketball; off court I cut videos, design bold visuals, and bring stories to life. Accounting taught me structure; creativity brings the color. Di waktu santai, aku juga hobi bermain game, terutama game FPS.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Height: 170cm+</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Age: 18+</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Birthday: July 5th</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Dream: Get Rich</span>
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Hobby: FPS Gaming</span>
                 </div>
               </div>
               <div ref={metricsRef} className="grid grid-cols-2 gap-4">
@@ -581,7 +593,13 @@ export default function App() {
                   className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-400/40 transition relative overflow-hidden"
                 >
                   <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-lime-400/10 transition" />
-                  <sk.icon className="text-emerald-300" />
+                  <motion.div
+                    animate={iconLoopForIndex(i)}
+                    transition={{ duration: 2 + (i % 4) * 0.2, repeat: Infinity, ease: 'easeInOut' }}
+                    className="inline-block"
+                  >
+                    <sk.icon className="text-emerald-300" />
+                  </motion.div>
                   <h3 className="mt-3 font-semibold text-lg">{sk.title}</h3>
                   <p className="text-white/75 mt-2 text-sm">{sk.desc}</p>
                 </motion.div>
