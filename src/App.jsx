@@ -22,6 +22,7 @@ export default function App() {
   const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
   const [likeClicks, setLikeClicks] = useState(0)
   const [showBigBurst, setShowBigBurst] = useState(false)
+  const likeInFlight = useRef(false) // prevent double-increment on rapid clicks
 
   // Backend base URL
   const backendBase = useMemo(() => {
@@ -231,32 +232,37 @@ export default function App() {
       return next
     })
 
-    if (!liked) {
-      // Try to increment on backend
-      try {
-        const res = await fetch(`${backendBase}/likes/increment`, { method: 'POST' })
-        if (res.ok) {
-          const data = await res.json()
-          if (typeof data?.count === 'number') setLikes(data.count)
-          setLiked(true)
-          try { localStorage.setItem('liked-global', 'true') } catch {}
-        } else {
-          // Fallback: optimistic local increment
-          setLikes((c) => c + 1)
-          setLiked(true)
-        }
-      } catch {
-        // Network error fallback
-        setLikes((c) => c + 1)
-        setLiked(true)
-      }
+    // If already liked (or request in-flight), do not increment again
+    if (liked || likeInFlight.current) {
       spawnHeartBurst()
-      triggerPeek() // also peek on first like
-    } else {
-      // Already liked: only show heart animation, don't change count
-      spawnHeartBurst()
-      triggerPeek() // peek on subsequent likes as well
+      triggerPeek()
+      return
     }
+
+    // Optimistically mark as liked immediately to block rapid multi-clicks
+    setLiked(true)
+    try { localStorage.setItem('liked-global', 'true') } catch {}
+
+    likeInFlight.current = true
+    // Try to increment on backend
+    try {
+      const res = await fetch(`${backendBase}/likes/increment`, { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        if (typeof data?.count === 'number') setLikes(data.count)
+      } else {
+        // Fallback: optimistic local increment
+        setLikes((c) => c + 1)
+      }
+    } catch {
+      // Network error fallback
+      setLikes((c) => c + 1)
+    } finally {
+      likeInFlight.current = false
+    }
+
+    spawnHeartBurst()
+    triggerPeek()
   }
 
   // Typing effect logic
