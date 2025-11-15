@@ -518,6 +518,7 @@ export default function App() {
         <Section id="about" className="relative py-24">
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
+              ref={metricsRef}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -560,10 +561,10 @@ export default function App() {
                     <span className="text-white/85 text-sm">{s.label}</span>
                     <span className="text-emerald-300 text-sm">{s.value}%</span>
                   </div>
-                  <div className="h-[6px] w-full rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-[6px] w-full rounded-full bg-white/10 overflow-hidden relative">
                     <div
                       className="h-full bg-gradient-to-r from-emerald-400 via-lime-300 to-green-500 transition-[width] duration-700 ease-out"
-                      style={{ width: aboutSeen ? `${s.value}%` : '0%' }}
+                      style={{ width: aboutSeen ? `${s.value}%` : '0%', boxShadow: '0 0 12px rgba(52,211,153,0.45)' }}
                     />
                   </div>
                 </motion.div>
@@ -581,10 +582,10 @@ export default function App() {
                   <span className="text-white/90 text-lg font-semibold">Gaming</span>
                   <span className="text-emerald-300 text-lg font-semibold">Unlimited</span>
                 </div>
-                <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden">
+                <div className="h-4 w-full rounded-full bg-white/10 overflow-hidden relative">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-400 via-lime-300 to-green-500"
-                    style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out' }}
+                    style={{ width: aboutSeen ? '100%' : '0%', transition: 'width 900ms ease-out', boxShadow: '0 0 14px rgba(52,211,153,0.5)' }}
                   />
                 </div>
               </motion.div>
