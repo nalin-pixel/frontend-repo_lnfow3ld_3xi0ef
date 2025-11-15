@@ -417,7 +417,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRma76ULGlgy6dIXE1qRhIIO8yCbk40a7mW2Q&usqp=CAU"
+                src="https://freepngimg.com/thumb/artwork/92738-pepe-emote-frog-amphibian-the-twitch.png"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0, rotate: 0, scale: 1 }}
                 animate={{
@@ -437,8 +437,7 @@ export default function App() {
                 style={{
                   top: `${peek.top}vh`,
                   transformOrigin: peek.side === 'left' ? 'left center' : 'right center',
-                  mixBlendMode: 'multiply',
-                  filter: 'url(#removeWhite) drop-shadow(0 8px 24px rgba(0,0,0,0.6))'
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.6))'
                 }}
               />
             )}
