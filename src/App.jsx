@@ -22,7 +22,6 @@ export default function App() {
   const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
   const [likeClicks, setLikeClicks] = useState(0)
   const [showBigBurst, setShowBigBurst] = useState(false)
-  const [explosionParts, setExplosionParts] = useState([]) // particles for big explosion
 
   // Backend base URL
   const backendBase = useMemo(() => {
@@ -161,26 +160,8 @@ export default function App() {
   }
 
   const triggerBigBurst = () => {
-    // Prepare particles with random directions, speeds, sizes, and timings
-    const parts = Array.from({ length: 60 }).map((_, i) => {
-      const angle = Math.random() * Math.PI * 2
-      const distance = 160 + Math.random() * 360 // how far it flies
-      const duration = 0.9 + Math.random() * 0.7
-      const delay = Math.random() * 0.12
-      const size = 12 + Math.floor(Math.random() * 16)
-      const rotate = (Math.random() * 720 - 360) | 0
-      const x = Math.cos(angle) * distance
-      const y = Math.sin(angle) * distance * 0.8 + distance * 0.25 // slight gravity effect
-      const hue = 340 + Math.random() * 20 // rose-pink range
-      return { id: `${Date.now()}_${i}`, x, y, duration, delay, size, rotate, hue }
-    })
-    setExplosionParts(parts)
     setShowBigBurst(true)
-    // Hide after max duration
-    setTimeout(() => {
-      setShowBigBurst(false)
-      setExplosionParts([])
-    }, 1400)
+    setTimeout(() => setShowBigBurst(false), 1200)
   }
 
   // Helper: trigger peeking image
@@ -749,86 +730,47 @@ export default function App() {
           </div>
         </Section>
 
-        {/* Big Heart Fullscreen Explosion */}
+        {/* Big Heart Fullscreen Burst (simple version) */}
         <AnimatePresence>
           {showBigBurst && (
             <motion.div
-              className="fixed inset-0 z-[60] pointer-events-none"
+              className="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.12 }}
             >
-              {/* Camera shake container */}
+              {/* radial glow */}
+              <div className="absolute inset-0" style={{
+                background: 'radial-gradient(60% 60% at 50% 50%, rgba(244,63,94,0.35), rgba(244,63,94,0.15) 40%, rgba(0,0,0,0))'
+              }} />
               <motion.div
-                className="absolute inset-0"
-                animate={{ x: [-6, 6, -4, 4, 0], y: [0, -3, 3, -2, 0] }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
+                initial={{ scale: 0, rotate: -12, opacity: 0.9 }}
+                animate={{ scale: [0, 1.1, 1], rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.9, ease: 'easeOut' }}
+                className="text-rose-400 drop-shadow-[0_30px_60px_rgba(244,63,94,0.5)]"
               >
-                {/* radial glow */}
-                <div className="absolute inset-0" style={{
-                  background: 'radial-gradient(60% 60% at 50% 50%, rgba(244,63,94,0.35), rgba(244,63,94,0.15) 40%, rgba(0,0,0,0))'
-                }} />
-
-                {/* Shockwave ring */}
-                <motion.div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-rose-300/60"
-                  initial={{ scale: 0, opacity: 0.8 }}
-                  animate={{ scale: 6, opacity: 0 }}
-                  transition={{ duration: 0.9, ease: 'easeOut' }}
-                  style={{ boxShadow: '0 0 60px rgba(244,63,94,0.35)', width: 40, height: 40 }}
-                />
-
-                {/* Central heart "bomb" */}
-                <motion.div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-rose-400 drop-shadow-[0_30px_60px_rgba(244,63,94,0.5)]"
-                  initial={{ scale: 0, rotate: -12, opacity: 0.95 }}
-                  animate={{ scale: [0, 1.2, 1], rotate: 0, opacity: 1 }}
-                  transition={{ duration: 0.7, ease: 'easeOut' }}
-                >
-                  <Heart size={260} fill="currentColor" stroke="none" className="hidden sm:block" />
-                  <Heart size={180} fill="currentColor" stroke="none" className="sm:hidden" />
-                </motion.div>
-
-                {/* Particles/hearts flying all over */}
-                {explosionParts.map((p) => (
-                  <motion.div
-                    key={p.id}
-                    className="absolute"
-                    style={{ left: '50%', top: '50%' }}
-                    initial={{ x: 0, y: 0, opacity: 1, scale: 0.8, rotate: 0 }}
-                    animate={{ x: p.x, y: p.y, opacity: 0, scale: 1, rotate: p.rotate }}
-                    transition={{ duration: p.duration, delay: p.delay, ease: 'easeOut' }}
-                  >
-                    <Heart
-                      size={p.size}
-                      stroke="none"
-                      style={{ color: `hsl(${p.hue} 90% 60%)`, filter: 'drop-shadow(0 8px 20px rgba(244,63,94,0.45))' }}
-                      fill="currentColor"
-                    />
-                  </motion.div>
-                ))}
-
-                {/* Tiny sparkles */}
-                {explosionParts.slice(0, 30).map((p, i) => (
-                  <motion.div
-                    key={`spark_${p.id}`}
-                    className="absolute"
-                    style={{ left: '50%', top: '50%', width: 4, height: 4, borderRadius: 9999, background: 'rgba(255,255,255,0.9)', boxShadow: '0 0 10px rgba(255,255,255,0.8)' }}
-                    initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                    animate={{ x: p.x * 1.1, y: p.y * 1.1, opacity: 0, scale: 0.6 }}
-                    transition={{ duration: 0.8 + (i % 5) * 0.08, delay: 0.02 * (i % 6), ease: 'easeOut' }}
-                  />
-                ))}
+                <Heart size={320} fill="currentColor" stroke="none" className="hidden sm:block" />
+                <Heart size={220} fill="currentColor" stroke="none" className="sm:hidden" />
               </motion.div>
-
-              {/* Quick flash */}
-              <motion.div
-                className="absolute inset-0 bg-white"
-                initial={{ opacity: 0.0 }}
-                animate={{ opacity: [0.0, 0.18, 0] }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
-              />
+              {/* shards */}
+              {[...Array(10)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute text-rose-300"
+                  initial={{ opacity: 0, scale: 0.6, x: 0, y: 0, rotate: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.6, 1, 1],
+                    x: (Math.cos((i / 10) * Math.PI * 2) * 240),
+                    y: (Math.sin((i / 10) * Math.PI * 2) * 180),
+                    rotate: i * 36
+                  }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
+                >
+                  <Heart size={24} fill="currentColor" stroke="none" />
+                </motion.div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
