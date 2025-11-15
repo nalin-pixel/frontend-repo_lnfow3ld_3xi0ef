@@ -537,7 +537,6 @@ export default function App() {
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Age: 18+</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Birthday: July 5th</span>
                   <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Dream: Get Rich</span>
-                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/85">Hobby: FPS Gaming</span>
                 </div>
               </div>
 
