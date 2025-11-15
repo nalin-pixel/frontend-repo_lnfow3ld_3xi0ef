@@ -25,11 +25,19 @@ export default function App() {
   const backendBase = useMemo(() => {
     const env = import.meta?.env?.VITE_BACKEND_URL
     if (env && typeof env === 'string' && env.trim()) return env.replace(/\/$/, '')
-    // Fallback: try switching port 3000 -> 8000 if same host
+    // Hosted fallback: swap -3000 subdomain marker to -8000
     try {
-      const u = new URL(window.location.href)
-      u.port = '8000'
-      return u.origin
+      const origin = window.location.origin
+      if (origin.includes('-3000.')) {
+        return origin.replace('-3000.', '-8000.')
+      }
+      // Local dev fallback: switch port 3000 -> 8000
+      const u = new URL(origin)
+      if (u.port === '3000') {
+        u.port = '8000'
+        return u.origin
+      }
+      return origin
     } catch {
       return ''
     }
