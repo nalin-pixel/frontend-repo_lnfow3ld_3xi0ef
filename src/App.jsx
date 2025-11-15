@@ -15,11 +15,25 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [flames, setFlames] = useState([]) // { id, x, y }
 
-  // Like state (single-like per session)
+  // Like state (lifetime via backend)
   const [likes, setLikes] = useState(0)
   const [liked, setLiked] = useState(false)
   const [hearts, setHearts] = useState([]) // { id }
   const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
+
+  // Backend base URL
+  const backendBase = useMemo(() => {
+    const env = import.meta?.env?.VITE_BACKEND_URL
+    if (env && typeof env === 'string' && env.trim()) return env.replace(/\/$/, '')
+    // Fallback: try switching port 3000 -> 8000 if same host
+    try {
+      const u = new URL(window.location.href)
+      u.port = '8000'
+      return u.origin
+    } catch {
+      return ''
+    }
+  }, [])
 
   // Peeking image state
   const [peek, setPeek] = useState(null) // { id, side: 'left'|'right', top: number }
@@ -165,11 +179,51 @@ export default function App() {
     }
   }, [])
 
-  const handleLike = (e) => {
+  // Initialize liked from localStorage and fetch current likes
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('liked-global')
+      if (stored === 'true') setLiked(true)
+    } catch {}
+
+    const fetchLikes = async () => {
+      try {
+        const res = await fetch(`${backendBase}/likes`)
+        if (!res.ok) throw new Error('Failed to fetch likes')
+        const data = await res.json()
+        if (typeof data?.count === 'number') setLikes(data.count)
+      } catch (e) {
+        // Silently ignore; keep local state
+      }
+    }
+    fetchLikes()
+
+    // Polling to stay in sync across visitors
+    const interval = setInterval(fetchLikes, 5000)
+    return () => clearInterval(interval)
+  }, [backendBase])
+
+  const handleLike = async (e) => {
     e.stopPropagation() // prevent global flame on like button
     if (!liked) {
-      setLiked(true)
-      setLikes((c) => c + 1)
+      // Try to increment on backend
+      try {
+        const res = await fetch(`${backendBase}/likes/increment`, { method: 'POST' })
+        if (res.ok) {
+          const data = await res.json()
+          if (typeof data?.count === 'number') setLikes(data.count)
+          setLiked(true)
+          try { localStorage.setItem('liked-global', 'true') } catch {}
+        } else {
+          // Fallback: optimistic local increment
+          setLikes((c) => c + 1)
+          setLiked(true)
+        }
+      } catch {
+        // Network error fallback
+        setLikes((c) => c + 1)
+        setLiked(true)
+      }
       spawnHeartBurst()
       triggerPeek() // also peek on first like
     } else {
