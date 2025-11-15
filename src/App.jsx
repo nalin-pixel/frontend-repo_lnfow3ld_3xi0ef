@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette, Menu, X, Heart } from 'lucide-react'
+import { ArrowRight, ArrowUp, BadgeCheck, PenTool, Camera, Palette, Menu, X, Heart, Instagram } from 'lucide-react'
 
 function Section({ id, children, className = '' }) {
   return (
@@ -20,6 +20,8 @@ export default function App() {
   const [liked, setLiked] = useState(false)
   const [hearts, setHearts] = useState([]) // { id }
   const lastHeartAt = useRef(0) // simple cooldown to avoid heart spam
+  const [likeClicks, setLikeClicks] = useState(0)
+  const [showBigBurst, setShowBigBurst] = useState(false)
 
   // Backend base URL
   const backendBase = useMemo(() => {
@@ -157,6 +159,11 @@ export default function App() {
     }, 900)
   }
 
+  const triggerBigBurst = () => {
+    setShowBigBurst(true)
+    setTimeout(() => setShowBigBurst(false), 1200)
+  }
+
   // Helper: trigger peeking image
   const triggerPeek = () => {
     // Random side and vertical position
@@ -213,6 +220,17 @@ export default function App() {
 
   const handleLike = async (e) => {
     e.stopPropagation() // prevent global flame on like button
+
+    // Update click streak for big burst
+    setLikeClicks((prev) => {
+      const next = prev + 1
+      if (next >= 5) {
+        triggerBigBurst()
+        return 0 // reset after burst
+      }
+      return next
+    })
+
     if (!liked) {
       // Try to increment on backend
       try {
@@ -468,7 +486,7 @@ export default function App() {
                   <p className="mt-4 text-white/85 text-lg">
                     Sports lover (especially basketball). Video editor and graphic designer. Accounting graduate. Taller than 170 cm — age 18+. Dreaming big and working bigger. I also enjoy gaming, especially the FPS genre.
                   </p>
-                  <p className="mt-3 text-white/80 italic">
+                  <p className="mt-3 text-white/90 font-bold">
                     {motto}
                     <span className={`inline-block w-[10px] ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}>|</span>
                   </p>
@@ -516,6 +534,10 @@ export default function App() {
                           />
                         </span>
                         <span className="text-sm font-medium">{likes}</span>
+                        {/* Hint to click 5 times */}
+                        <span className="ml-2 text-[11px] px-2 py-0.5 rounded-full bg-white/10 text-white/80 hidden sm:inline">
+                          klik 5 kali
+                        </span>
                       </button>
 
                       {/* Flying heart animation container */}
@@ -707,6 +729,62 @@ export default function App() {
             </div>
           </div>
         </Section>
+
+        {/* Big Heart Fullscreen Burst */}
+        <AnimatePresence>
+          {showBigBurst && (
+            <motion.div
+              className="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12 }}
+            >
+              {/* radial glow */}
+              <div className="absolute inset-0" style={{
+                background: 'radial-gradient(60% 60% at 50% 50%, rgba(244,63,94,0.35), rgba(244,63,94,0.15) 40%, rgba(0,0,0,0))'
+              }} />
+              <motion.div
+                initial={{ scale: 0, rotate: -12, opacity: 0.9 }}
+                animate={{ scale: [0, 1.1, 1], rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.9, ease: 'easeOut' }}
+                className="text-rose-400 drop-shadow-[0_30px_60px_rgba(244,63,94,0.5)]"
+              >
+                <Heart size={320} fill="currentColor" stroke="none" className="hidden sm:block" />
+                <Heart size={220} fill="currentColor" stroke="none" className="sm:hidden" />
+              </motion.div>
+              {/* shards */}
+              {[...Array(10)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute text-rose-300"
+                  initial={{ opacity: 0, scale: 0.6, x: 0, y: 0, rotate: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.6, 1, 1],
+                    x: (Math.cos((i / 10) * Math.PI * 2) * 240),
+                    y: (Math.sin((i / 10) * Math.PI * 2) * 180),
+                    rotate: i * 36
+                  }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
+                >
+                  <Heart size={24} fill="currentColor" stroke="none" />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Instagram Floating Button */}
+        <a
+          href="https://www.instagram.com/arthaahu?igsh=ODQyam1vYzF1cm1z"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Instagram"
+          className="fixed bottom-24 right-6 h-12 w-12 rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#962fbf] text-white shadow-lg shadow-pink-500/30 flex items-center justify-center hover:opacity-90"
+        >
+          <Instagram size={22} />
+        </a>
 
         {/* Back to Top Button */}
         <button
