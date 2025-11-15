@@ -301,6 +301,21 @@ export default function App() {
         backgroundAttachment: 'fixed',
       }}
     >
+      {/* SVG filter to knock out white backgrounds from the peeking image */}
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <filter id="removeWhite" colorInterpolationFilters="sRGB">
+          {/* Convert to luminance in red channel */}
+          <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0" result="lum" />
+          {/* Invert luminance to get dark areas opaque, light areas transparent */}
+          <feComponentTransfer>
+            <feFuncR type="table" tableValues="1 0" />
+            <feFuncG type="table" tableValues="1 0" />
+            <feFuncB type="table" tableValues="1 0" />
+            <feFuncA type="table" tableValues="0 1" />
+          </feComponentTransfer>
+        </filter>
+      </svg>
+
       {/* Overlay for readability */}
       <div className="min-h-screen bg-black/60">
         {/* Navbar */}
@@ -402,7 +417,7 @@ export default function App() {
             {peek && (
               <motion.img
                 key={peek.id}
-                src="https://eu-central.storage.cloudconvert.com/tasks/3cb1c102-4c5a-4468-8584-15be71f95eb7/aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20251114%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20251114T232100Z&X-Amz-Expires=86400&X-Amz-Signature=4e154fca8c1a96e0c40785ba9bfbc6b820c49d36b044de73d47b7793fe4af785&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B%20filename%3D%22aa055f80-452c-44d1-a9fb-b158cc2401c9_20251115_000949_0000.webp%22&response-content-type=image%2Fwebp&x-id=GetObject"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRma76ULGlgy6dIXE1qRhIIO8yCbk40a7mW2Q&usqp=CAU"
                 alt="Peeking graphic"
                 initial={{ x: peek.side === 'left' ? '-110%' : '110%', opacity: 0, rotate: 0, scale: 1 }}
                 animate={{
@@ -418,8 +433,13 @@ export default function App() {
                   rotate: { duration: 1.2, repeat: Infinity, repeatType: 'mirror' },
                   scale: { duration: 1.6, repeat: Infinity, repeatType: 'mirror' }
                 }}
-                className={`absolute ${peek.side === 'left' ? 'left-0' : 'right-0'} w-[120px] sm:w-[160px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]`}
-                style={{ top: `${peek.top}vh`, transformOrigin: peek.side === 'left' ? 'left center' : 'right center' }}
+                className={`absolute ${peek.side === 'left' ? 'left-0' : 'right-0'} w-[120px] sm:w-[160px]`}
+                style={{
+                  top: `${peek.top}vh`,
+                  transformOrigin: peek.side === 'left' ? 'left center' : 'right center',
+                  mixBlendMode: 'multiply',
+                  filter: 'url(#removeWhite) drop-shadow(0 8px 24px rgba(0,0,0,0.6))'
+                }}
               />
             )}
           </AnimatePresence>
